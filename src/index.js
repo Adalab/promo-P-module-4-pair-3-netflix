@@ -14,9 +14,16 @@ server.listen(serverPort, () => {
 });
 
 server.get('/movies', (req, res) => {
-  console.log(req.query);
+  console.log(typeof req.query.gender);
+
   res.send({
     success: true,
-    movies: movies.filter((movie) => movie.gender === req.query.gender ? req.query.gender : movies),
-  })
+    movies: movies.filter((movie) => {
+      if (req.query.gender == '') {
+        return true;
+      } else {
+        return movie.gender === req.query.gender ? true : false;
+      }
+    }),
+  });
 });
