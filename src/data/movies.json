@@ -1,14 +1,14 @@
 [
-    {
-      "id": "1",
-      "title": "Gambita de dama",
-      "gender": "Drama",
-      "image": "https://via.placeholder.com/150"
-    },
-    {
-      "id": "2",
-      "title": "Friends",
-      "gender": "Comedia",
-      "image": "https://via.placeholder.com/150"
-    }
+  {
+    "id": "1",
+    "title": "Gambita de dama",
+    "gender": "Drama",
+    "image": "//localhost:4001/gambita-de-dama.jpeg"
+  },
+  {
+    "id": "2",
+    "title": "Friends",
+    "gender": "Comedia",
+    "image": "//localhost:4001/friends.jpeg"
+  }
 ]

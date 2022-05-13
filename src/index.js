@@ -7,8 +7,15 @@ const server = express();
 server.use(cors());
 server.use(express.json());
 
+// Generamos un servidos estático
+const staticServerPathWeb = './src/public-react'; // En esta carpeta ponemos los ficheros estáticos
+server.use(express.static(staticServerPathWeb));
+
 // init express aplication
+// Definimos el puerto en el que vamos a tener el servidor
 const serverPort = 4001;
+
+//Escuchamos el servidor
 server.listen(serverPort, () => {
   console.log(`Server listening at http://localhost:${serverPort}`);
 });
@@ -27,3 +34,8 @@ server.get('/movies', (req, res) => {
     }),
   });
 });
+
+// Generamos servidos de estaticos para las imagenes
+
+const staticServerPathWebPhotos = './src/public-movies-images'; // En esta carpeta ponemos los ficheros estáticos
+server.use(express.static(staticServerPathWebPhotos));
