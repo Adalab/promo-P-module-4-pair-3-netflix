@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const movies = require('./data/movies.json');
-
+const users = require('./data/users.json');
 // create and config server
 const server = express();
 server.use(cors());
@@ -39,3 +39,12 @@ server.get('/movies', (req, res) => {
 
 const staticServerPathWebPhotos = './src/public-movies-images'; // En esta carpeta ponemos los ficheros estáticos
 server.use(express.static(staticServerPathWebPhotos));
+
+server.post('/login', (req, res) => {
+  console.log(req.body);
+  const userLogin = users
+    .find((user) => user.email === req.body.email)
+    .find((user) => user.password === req.body.password);
+
+  res.json({ success: true, userId: userLogin.id }, 404);
+});
