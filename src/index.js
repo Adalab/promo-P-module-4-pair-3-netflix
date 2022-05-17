@@ -7,6 +7,9 @@ const server = express();
 server.use(cors());
 server.use(express.json());
 
+// Configuramos motor de plantillas
+server.set('view engine', 'ejs');
+
 // Generamos un servidos estático
 const staticServerPathWeb = './src/public-react'; // En esta carpeta ponemos los ficheros estáticos
 server.use(express.static(staticServerPathWeb));
@@ -40,11 +43,24 @@ server.get('/movies', (req, res) => {
 const staticServerPathWebPhotos = './src/public-movies-images'; // En esta carpeta ponemos los ficheros estáticos
 server.use(express.static(staticServerPathWebPhotos));
 
+const staticServerStyles = './src/styles';
+server.use(express.static(staticServerStyles));
+
 server.post('/login', (req, res) => {
-  console.log(req.body);
   const userLogin = users
     .find((user) => user.email === req.body.email)
     .find((user) => user.password === req.body.password);
 
   res.json({ success: true, userId: userLogin.id }, 404);
+});
+
+server.get('/movie/:movieId', (req, res) => {
+  const foundMovie = movies.find((movie) => movie.id === req.params.movieId);
+  console.log(foundMovie);
+  if (foundMovie) {
+    res.render('movie', foundMovie);
+  } else {
+    const route = { route: req.url };
+    res.render('movie-not-found', route)
+  }
 });
