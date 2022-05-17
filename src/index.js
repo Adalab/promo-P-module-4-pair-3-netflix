@@ -43,6 +43,14 @@ const sortMovies = (movies, sortType) => {
   return moviesOrder;
 };
 
+// Generamos servidos de estaticos para las imagenes
+
+const staticServerPathWebPhotos = './src/public-movies-images'; // En esta carpeta ponemos los ficheros estáticos
+server.use(express.static(staticServerPathWebPhotos));
+
+const staticServerStyles = './src/styles';
+server.use(express.static(staticServerStyles));
+
 //Escuchamos el servidor
 server.listen(serverPort, () => {
   console.log(`Server listening at http://localhost:${serverPort}`);
@@ -64,20 +72,19 @@ server.get('/movies', (req, res) => {
   });
 });
 
-// Generamos servidos de estaticos para las imagenes
-
-const staticServerPathWebPhotos = './src/public-movies-images'; // En esta carpeta ponemos los ficheros estáticos
-server.use(express.static(staticServerPathWebPhotos));
-
-const staticServerStyles = './src/styles';
-server.use(express.static(staticServerStyles));
-
 server.post('/login', (req, res) => {
   const userLogin = users
-    .find((user) => user.email === req.body.email)
-    .find((user) => user.password === req.body.password);
-
-  res.json({ success: true, userId: userLogin.id }, 404);
+    .find((user) => user.email === req.body.email && user.password === req.body.password);
+  let response ;
+  if (userLogin) {
+    response = { success: true, userId: userLogin.id };
+  } else {
+    response = {
+      success: false,
+      errorMessage: "Usuaria/o no encontrada/o"
+    }
+  }
+  res.json(response);
 });
 
 server.get('/movie/:movieId', (req, res) => {
