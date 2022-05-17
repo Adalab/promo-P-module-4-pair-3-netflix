@@ -13,7 +13,17 @@ const sendLoginToApi = (data) => {
     .then((response) => response.json())
     .then(
       () => {
-        return data;
+        if (data.email.includes('gmail')) {
+          return {
+            success: true,
+            userId: '123',
+          };
+        } else {
+          return {
+            success: false,
+            errorMessage: 'Usuario no encontrado',
+          };
+        }
       }
       // CAMBIA EL CONTENIDO DE ESTE THEN PARA GESTIONAR LA RESPUESTA DEL SERVIDOR Y RETORNAR AL COMPONENTE APP LO QUE NECESITA
     );
