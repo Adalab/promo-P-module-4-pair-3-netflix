@@ -18,23 +18,49 @@ server.use(express.static(staticServerPathWeb));
 // Definimos el puerto en el que vamos a tener el servidor
 const serverPort = 4001;
 
+// Funciones
+const sortMovies = (movies, sortType) => {
+  const moviesOrder = movies.sort((a, b) => {
+    const nameA = a.title.toUpperCase();
+    const nameB = b.title.toUpperCase();
+    if (sortType === 'asc') {
+      if (nameA < nameB) {
+        return -1;
+      }
+      if (nameA > nameB) {
+        return 1;
+      }
+    } else if (sortType === 'desc') {
+      if (nameA < nameB) {
+        return 1;
+      }
+      if (nameA > nameB) {
+        return -1;
+      }
+    }
+    return 0;
+  });
+  return moviesOrder;
+};
+
 //Escuchamos el servidor
 server.listen(serverPort, () => {
   console.log(`Server listening at http://localhost:${serverPort}`);
 });
 
 server.get('/movies', (req, res) => {
-  console.log(typeof req.query.gender);
-
-  res.send({
+  const moviesFilter = movies.filter((movie) => {
+    if (req.query.gender == '') {
+      return true;
+    } else {
+      return movie.gender === req.query.gender ? true : false;
+    }
+  });
+  const sortType = req.query.sort;
+  const sortedMovies = sortMovies(moviesFilter, sortType);
+  res.json({
     success: true,
-    movies: movies.filter((movie) => {
-      if (req.query.gender == '') {
-        return true;
-      } else {
-        return movie.gender === req.query.gender ? true : false;
-      }
-    }),
+    movies: sortedMovies,
   });
 });
 
