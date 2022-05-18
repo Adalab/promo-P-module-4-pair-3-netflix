@@ -61,21 +61,20 @@ server.listen(serverPort, () => {
 const db = Database('./src/db/database.db', { verbose: console.log });
 
 server.get('/movies', (req, res) => {
+  console.log(req.query);
   //buscamos en la DB los datos que necesito
-  const query = db.prepare(`SELECT  * FROM movies`);
-  //Ejecuto la sentencia SQL
-  const movieList = query.all();
-  const movieGender = query.all(req.query.gender);
 
-  const moviesFilter = movieList.filter((movie) => {
-    if (req.query.gender == '') {
-      return true;
-    } else {
-      return movie.gender === req.query.gender ? true : false;
-    }
-  });
+  let movieList = [];
+  if (req.query.gender == '') {
+    const query = db.prepare(`SELECT  * FROM movies`);
+    movieList = query.all();
+  } else {
+    const query = db.prepare(`SELECT  * FROM movies WHERE gender= ?`);
+    movieList = query.all(req.query.gender);
+  }
+
   const sortType = req.query.sort;
-  const sortedMovies = sortMovies(moviesFilter, sortType);
+  const sortedMovies = sortMovies(movieList, sortType);
 
   res.json({
     success: true,
