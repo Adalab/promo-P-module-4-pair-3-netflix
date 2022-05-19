@@ -57,8 +57,8 @@ Por favor marca a continuación los ejericios que hayais terminado:
 - [x] 2. Configura la base de datos en Node JS
 - [x] 3. Haz un SELECT para obtener todas películas
 - [x] 4. Mejora tu SELECT
-- [ ] 5. SELECT para el motor de plantillas
-- [ ] 6. Crear la tabla de usuarias
+- [x] 5. SELECT para el motor de plantillas
+- [x] 6. Crear la tabla de usuarias
 
   4.6 Bases de datos I:
 
@@ -66,7 +66,7 @@ Por favor marca a continuación los ejericios que hayais terminado:
 - [x] 2. Registro de nuevas usuarias en el back
 - [x] 3. Comprueba que no haya una usuaria registrada con el mismo email
 - [x] 4. Actualiza el perfil de la usuaria en el front
-- [wip] 5. Cctualiza el perfil de la usuaria en el back
+- [wip] 5. Actualiza el perfil de la usuaria en el back
 - [ ] 6. Recupera los datos del perfil de la usuaria desde el front
 - [ ] 7. Recupera los datos del perfil de la usuaria desde el back
 

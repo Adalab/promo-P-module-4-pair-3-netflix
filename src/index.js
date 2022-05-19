@@ -3,6 +3,7 @@ const cors = require('cors');
 const movies = require('./data/movies.json');
 const users = require('./data/users.json');
 const Database = require('better-sqlite3');
+const res = require('express/lib/response');
 // create and config server
 const server = express();
 server.use(cors());
@@ -61,7 +62,6 @@ server.listen(serverPort, () => {
 const db = Database('./src/db/database.db', { verbose: console.log });
 
 server.get('/movies', (req, res) => {
-  console.log(req.query);
   //buscamos en la DB los datos que necesito
 
   let movieList = [];
@@ -105,8 +105,9 @@ server.get('/movie/:movieId', (req, res) => {
   console.log(query);
   //Ejecuto la sentencia SQL
   const movieList = query.all();
-  const foundMovie = movieList.find((movie) => movie.id === req.params.movieId);
-  console.log(foundMovie);
+  const queryId = db.prepare('SELECT * FROM movies WHERE id = ?');
+  const foundMovie = queryId.get(req.params.movieId);
+  // const foundMovie = movieList.find((movie) => movie.id === req.params.movieId);
   if (foundMovie) {
     res.render('movie', foundMovie);
   } else {
@@ -133,16 +134,49 @@ server.post('/sign-up', (req, resp) => {
     resp.json({
       success: true,
       msj: 'Usuario insertado',
-      userID: insertUser.lastInsertRowid,
+      userId: insertUser.lastInsertRowid,
     });
   }
 });
 
 // ENDPOINT actualizar perfil de la usuaria
-server.post('/user/profile', (req, resp) => {
-  const email = req.body.email;
-  const password = req.body.password;
-  const id = req.headers.userId;
-  
-  const query = db.prepare('UPDATE users SET email = ?, password = ? WHERE id = ?');
+server.put('/user/profile', (req, resp) => {
+  const data = req.body.data;
+  const id = req.headers.userid;
+  console.log(req.headers.userid);
+  const query = db.prepare('UPDATE users SET name = ?, email = ?, password = ? WHERE id = ?');
+  const result = query.run(
+    data.name,
+    data.email,
+    data.password,
+    id
+  );
+  if (result.changes !== 0) {
+    resp.json({
+      success: true,
+      msj: 'Los datos se han cambiado correctamente.'
+    });
+  } else {
+    resp.json({
+      success: false,
+      msj: 'Ha habido algún error.'
+    });
+  };
 });
+
+//endpoint to return user profile
+server.get(
+  "/user/profile",
+  (req, res) => {
+    const userProfile =
+    req.headers.userid;
+    const query = db.prepare(
+      "SELECT * FROM users WHERE id = ?"
+    );
+    const getUser = query.get(userProfile);
+    res.json({
+      success: true,
+      user: getUser,
+    });
+  }
+);
