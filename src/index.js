@@ -114,3 +114,35 @@ server.get('/movie/:movieId', (req, res) => {
     res.render('movie-not-found', route);
   }
 });
+
+server.post('/sign-up', (req, resp) => {
+  const email = req.body.email;
+  const password = req.body.password;
+  const queryEmail = db.prepare('SELECT * FROM users WHERE email = ?');
+  const foundEmail = queryEmail.get(email);
+  if (foundEmail !== undefined) {
+    resp.json({
+      success: false,
+      errorMessage: 'Usuaria ya existente',
+    });
+  } else {
+    const query = db.prepare(
+      `INSERT INTO users (email, password) VALUES (?, ?) `
+    );
+    const insertUser = query.run(email, password);
+    resp.json({
+      success: true,
+      msj: 'Usuario insertado',
+      userID: insertUser.lastInsertRowid,
+    });
+  }
+});
+
+// ENDPOINT actualizar perfil de la usuaria
+server.post('/user/profile', (req, resp) => {
+  const email = req.body.email;
+  const password = req.body.password;
+  const id = req.headers.userId;
+  
+  const query = db.prepare('UPDATE users SET email = ?, password = ? WHERE id = ?');
+});
