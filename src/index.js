@@ -141,42 +141,32 @@ server.post('/sign-up', (req, resp) => {
 
 // ENDPOINT actualizar perfil de la usuaria
 server.put('/user/profile', (req, resp) => {
-  const data = req.body.data;
+  const data = req.body;
   const id = req.headers.userid;
-  console.log(req.headers.userid);
-  const query = db.prepare('UPDATE users SET name = ?, email = ?, password = ? WHERE id = ?');
-  const result = query.run(
-    data.name,
-    data.email,
-    data.password,
-    id
+  const query = db.prepare(
+    'UPDATE users SET name = ?, email = ?, password = ? WHERE id = ?'
   );
+  const result = query.run(data.name, data.email, data.password, id);
   if (result.changes !== 0) {
     resp.json({
       success: true,
-      msj: 'Los datos se han cambiado correctamente.'
+      msj: 'Los datos se han cambiado correctamente.',
     });
   } else {
     resp.json({
       success: false,
-      msj: 'Ha habido algún error.'
+      msj: 'Ha habido algún error.',
     });
-  };
+  }
 });
 
 //endpoint to return user profile
-server.get(
-  "/user/profile",
-  (req, res) => {
-    const userProfile =
-    req.headers.userid;
-    const query = db.prepare(
-      "SELECT * FROM users WHERE id = ?"
-    );
-    const getUser = query.get(userProfile);
-    res.json({
-      success: true,
-      user: getUser,
-    });
-  }
-);
+server.get('/user/profile', (req, res) => {
+  const userProfile = req.headers.userid;
+  const query = db.prepare('SELECT * FROM users WHERE id = ?');
+  const getUser = query.get(userProfile);
+  res.json({
+    success: true,
+    user: getUser,
+  });
+});
