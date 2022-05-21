@@ -5,7 +5,8 @@ const cors = require('cors');
 const movies = require('./data/movies.json');
 const users = require('./data/users.json');
 const Database = require('better-sqlite3');
-const res = require('express/lib/response');
+// const res = require('express/lib/response');
+
 // create and config server
 const server = express();
 server.use(cors());
@@ -14,13 +15,29 @@ server.use(express.json());
 // Configuramos motor de plantillas
 server.set('view engine', 'ejs');
 
+// init express aplication
+// Definimos el puerto en el que vamos a tener el servidor
+const serverPort = 4001;
+
+//Escuchamos el servidor
+server.listen(serverPort, () => {
+  console.log(`Server listening at http://localhost:${serverPort}`);
+});
+
 // Generamos un servidos estático
 const staticServerPathWeb = './src/public-react'; // En esta carpeta ponemos los ficheros estáticos
 server.use(express.static(staticServerPathWeb));
 
-// init express aplication
-// Definimos el puerto en el que vamos a tener el servidor
-const serverPort = 4001;
+// Generamos servidos de estaticos para las imagenes
+
+const staticServerPathWebPhotos = './src/public-movies-images'; // En esta carpeta ponemos los ficheros estáticos
+server.use(express.static(staticServerPathWebPhotos));
+
+const staticServerStyles = './src/styles';
+server.use(express.static(staticServerStyles));
+
+//Definino  la DB con la que vamos a trabajar
+const db = Database('./src/db/database.db', { verbose: console.log });
 
 // Funciones
 const sortMovies = (movies, sortType) => {
@@ -46,69 +63,69 @@ const sortMovies = (movies, sortType) => {
   });
   return moviesOrder;
 };
-
-// Generamos servidos de estaticos para las imagenes
-
-const staticServerPathWebPhotos = './src/public-movies-images'; // En esta carpeta ponemos los ficheros estáticos
-server.use(express.static(staticServerPathWebPhotos));
-
-const staticServerStyles = './src/styles';
-server.use(express.static(staticServerStyles));
-
-//Escuchamos el servidor
-server.listen(serverPort, () => {
-  console.log(`Server listening at http://localhost:${serverPort}`);
-});
-
-//Definino  la DB con la que vamos a trabajar
-const db = Database('./src/db/database.db', { verbose: console.log });
-
 server.get('/movies', (req, res) => {
   //buscamos en la DB los datos que necesito
-
-  let movieList = [];
-  if (req.query.gender == '') {
-    const query = db.prepare(`SELECT  * FROM movies`);
-    movieList = query.all();
-  } else {
-    const query = db.prepare(`SELECT  * FROM movies WHERE gender= ?`);
-    movieList = query.all(req.query.gender);
-  }
-
-  const sortType = req.query.sort;
-  const sortedMovies = sortMovies(movieList, sortType);
+  // query params
+  const gender = req.query.gender;
+  const sort = req.query.sort;
+  // espedificamos el genero que queremos y el orden
+  const query = db.prepare(
+    `SELECT * FROM movies WHERE gender LIKE ? ORDER BY name ${sort}`
+  );
+  const movieList = query.all(gender ? gender.toLowerCase() : '%');
 
   res.json({
     success: true,
-    movies: sortedMovies,
+    movies: movieList,
   });
 });
 
+// endopoint login
 server.post('/login', (req, res) => {
-  const userLogin = users.find(
-    (user) =>
-      user.email === req.body.email && user.password === req.body.password
+  // Recibimos los datos por body params
+  const password = req.body.password;
+  const email = req.body.email;
+
+  // Buscamos todos los usuarios en nustra base de datos y filtramos por el usuario que recibimos en los body params
+
+  const usersDB = db.prepare(
+    `SELECT * FROM users WHERE email = ? AND password = ?`
   );
+
+  const userLoginDB = usersDB.get(email, password);
   let response;
-  if (userLogin) {
-    response = { success: true, userId: userLogin.id };
+  if (userLoginDB !== undefined) {
+    response = { success: true, userId: userLoginDB.id };
   } else {
     response = {
       success: false,
       errorMessage: 'Usuaria/o no encontrada/o',
     };
   }
+
+  // Buscamos los datos en el json que tenemos
+  // const userLogin = users.find(
+  //   (user) => user.email === email && user.password === password
+  // );
+  // let response;
+  // if (userLogin) {
+  //   response = { success: true, userId: userLogin.id };
+  // } else {
+  //   response = {
+  //     success: false,
+  //     errorMessage: 'Usuaria/o no encontrada/o',
+  //   };
+  // }
   res.json(response);
 });
 
+// endpoint para el detalle de la pelicula
 server.get('/movie/:movieId', (req, res) => {
-  //buscamos en la DB los datos que necesito
-  const query = db.prepare(`SELECT  * FROM movies `);
-  console.log(query);
-  //Ejecuto la sentencia SQL
-  const movieList = query.all();
+  //buscamos en la DB los datos la pelicula que queremos segun el id que le enviamos por el parametro de la ruta
+  const param = req.params.movieId;
+
   const queryId = db.prepare('SELECT * FROM movies WHERE id = ?');
-  const foundMovie = queryId.get(req.params.movieId);
+  const foundMovie = queryId.get(param);
   // const foundMovie = movieList.find((movie) => movie.id === req.params.movieId);
   if (foundMovie) {
     res.render('movie', foundMovie);
@@ -118,17 +135,22 @@ server.get('/movie/:movieId', (req, res) => {
   }
 });
 
+// endpoint de registro
 server.post('/sign-up', (req, resp) => {
+  // recibimos los datos por body params
   const email = req.body.email;
   const password = req.body.password;
   const queryEmail = db.prepare('SELECT * FROM users WHERE email = ?');
   const foundEmail = queryEmail.get(email);
+
+  // comprobamos que el email no este registrado en la base de datos
   if (foundEmail !== undefined) {
     resp.json({
       success: false,
       errorMessage: 'Usuaria ya existente',
     });
   } else {
+    // sino lo esta, lo registramos
     const query = db.prepare(
       `INSERT INTO users (email, password) VALUES (?, ?) `
     );
@@ -136,6 +158,7 @@ server.post('/sign-up', (req, resp) => {
     resp.json({
       success: true,
       msj: 'Usuario insertado',
+      // lastInsertRowid indica que id se ha creado en la BD
       userId: insertUser.lastInsertRowid,
     });
   }
@@ -143,12 +166,17 @@ server.post('/sign-up', (req, resp) => {
 
 // ENDPOINT actualizar perfil de la usuaria
 server.put('/user/profile', (req, resp) => {
+  // recibimos los datos que la usuaria quiere modificar
   const data = req.body;
+  // recibimos el id de la uruaria que quiere modificar sus datos por header params
   const id = req.headers.userid;
+  // preparamos la query con los valores que la usuaria quiere modificar, recibiendo a la usuaria por el id
   const query = db.prepare(
     'UPDATE users SET name = ?, email = ?, password = ? WHERE id = ?'
   );
+
   const result = query.run(data.name, data.email, data.password, id);
+  // si hay cambios los datos se han modificado correctamente
   if (result.changes !== 0) {
     resp.json({
       success: true,
@@ -164,6 +192,7 @@ server.put('/user/profile', (req, resp) => {
 
 //endpoint to return user profile
 server.get('/user/profile', (req, res) => {
+  // rebicimos el id por header params
   const userProfile = req.headers.userid;
   const query = db.prepare('SELECT * FROM users WHERE id = ?');
   const getUser = query.get(userProfile);
