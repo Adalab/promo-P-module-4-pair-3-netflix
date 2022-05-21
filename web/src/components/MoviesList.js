@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { Link } from 'react-router-dom';
 const MoviesList = (props) => {
   const renderMovieList = () => {
     return <ul className="cards">{renderMovies()}</ul>;
@@ -14,8 +14,13 @@ const MoviesList = (props) => {
             src={movie.image}
             alt={`Carátula de ${movie.title}`}
           />
+
           <h3 className="card__title">{movie.name}</h3>
+
           <p className="card__description">Género: {movie.gender}</p>
+          <a className="card__link" href={`/movie/${movie.id}`}>
+            Info
+          </a>
         </li>
       );
     });

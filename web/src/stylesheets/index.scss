@@ -7,3 +7,17 @@
   box-sizing: border-box;
   font-family: 'Roboto', sans-serif;
 }
+
+.card {
+  &__link {
+    color: #14d9c4;
+    text-align: right;
+    padding-right: 4px;
+    padding-bottom: 4px;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
