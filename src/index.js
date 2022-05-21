@@ -24,18 +24,6 @@ server.listen(serverPort, () => {
   console.log(`Server listening at http://localhost:${serverPort}`);
 });
 
-// Generamos un servidos estático
-const staticServerPathWeb = './src/public-react'; // En esta carpeta ponemos los ficheros estáticos
-server.use(express.static(staticServerPathWeb));
-
-// Generamos servidos de estaticos para las imagenes
-
-const staticServerPathWebPhotos = './src/public-movies-images'; // En esta carpeta ponemos los ficheros estáticos
-server.use(express.static(staticServerPathWebPhotos));
-
-const staticServerStyles = './src/styles';
-server.use(express.static(staticServerStyles));
-
 //Definino  la DB con la que vamos a trabajar
 const db = Database('./src/db/database.db', { verbose: console.log });
 
@@ -234,3 +222,15 @@ server.get('/user/movies', (req, res) => {
     movies: movies,
   });
 });
+
+// Generamos un servidos estático
+const staticServerPathWeb = './src/public-react'; // En esta carpeta ponemos los ficheros estáticos
+server.use(express.static(staticServerPathWeb));
+
+// Generamos servidos de estaticos para las imagenes
+
+const staticServerPathWebPhotos = './src/public-movies-images'; // En esta carpeta ponemos los ficheros estáticos
+server.use(express.static(staticServerPathWebPhotos));
+
+const staticServerStyles = './src/styles';
+server.use(express.static(staticServerStyles));
