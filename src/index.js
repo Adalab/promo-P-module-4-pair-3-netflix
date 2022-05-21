@@ -1,3 +1,5 @@
+// Importamos las depencias que necesitamos
+
 const express = require('express');
 const cors = require('cors');
 const movies = require('./data/movies.json');

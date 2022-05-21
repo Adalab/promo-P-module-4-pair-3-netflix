@@ -4,10 +4,10 @@
   box-sizing: border-box;
 }
 .article {
-  width: 450px;
-  height: 400px;
+  width: 500px;
+  height: 500px;
   display: flex;
-  justify-content: space-around;
+  justify-content: space-evenly;
   align-items: center;
   border-radius: 5px;
   border: 2px solid #e8bef0;
@@ -63,4 +63,8 @@
 .main_link:hover {
   transform: scale(1.01);
   text-decoration: underline;
+}
+
+.description {
+  max-width: 200px;
 }
