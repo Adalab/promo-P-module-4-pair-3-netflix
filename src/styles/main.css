@@ -1,54 +1,66 @@
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  .article {
-    width: 450px;
-    height: 400px;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    border-radius: 5px;
-    border: 2px solid #e8bef0;
-    border-radius: 5px;
-    margin-top: 30px;
-    background-color: white;
-  }
-  .article__img {
-    height: 280px;
-    border-radius: 5px;
-  }
-  .article__title,
-  .article__gender,
-  .article__back {
-    margin: 10px 0;
-    font-size: 16px;
-    font-family: "Roboto", sans-serif;
-    color: #54585B;
-    line-height: 22px;
-  }
-  .article__title {
-    font-size: 20px;
-  }
-  .article__back {
-    text-decoration: none;
-    color: #e8bef0;
-    font-family: "Roboto", sans-serif;
-  }
-  .article__back:hover {
-    transform: scale(1.01);
-    text-decoration: underline;
-  }
-  .wrapper {
-    width: 100%;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #f0dff4;
-  }
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.article {
+  width: 450px;
+  height: 400px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  border-radius: 5px;
+  border: 2px solid #e8bef0;
+  border-radius: 5px;
+  margin-top: 30px;
+  background-color: white;
+}
+.article__img {
+  height: 280px;
+  border-radius: 5px;
+}
+.article__title,
+.article__gender,
+.article__back {
+  margin: 10px 0;
+  font-size: 16px;
+  font-family: 'Roboto', sans-serif;
+  color: #54585b;
+  line-height: 22px;
+}
+.article__title {
+  font-size: 20px;
+}
+.article__back {
+  text-decoration: none;
+  color: #e8bef0;
+  font-family: 'Roboto', sans-serif;
+}
+.article__back:hover {
+  transform: scale(1.01);
+  text-decoration: underline;
+}
+.wrapper {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f0dff4;
+}
 
-  .page_not_found {
-    background-color: #f0dff4;
-  }
+.page_not_found {
+  background-color: #f0dff4;
+  padding-top: 50px;
+  text-align: center;
+}
+.main_link {
+  text-decoration: none;
+  color: #833393;
+  font-family: 'Roboto', sans-serif;
+}
+
+.main_link:hover {
+  transform: scale(1.01);
+  text-decoration: underline;
+}
