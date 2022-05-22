@@ -5,7 +5,7 @@ const cors = require('cors');
 const movies = require('./data/movies.json');
 const users = require('./data/users.json');
 const Database = require('better-sqlite3');
-// const res = require('express/lib/response');
+
 
 // create and config server
 const server = express();
@@ -51,6 +51,8 @@ const sortMovies = (movies, sortType) => {
   });
   return moviesOrder;
 };
+
+// endpoint para pintar las películas
 server.get('/movies', (req, res) => {
   //buscamos en la DB los datos que necesito
   // query params
@@ -152,7 +154,20 @@ server.post('/sign-up', (req, resp) => {
   }
 });
 
+//endpoint to return user profile
+server.get('/user/profile', (req, res) => {
+  // rebicimos el id por header params
+  const userProfile = req.headers.userid;
+  const query = db.prepare('SELECT * FROM users WHERE id = ?');
+  const getUser = query.get(userProfile);
+  res.json({
+    success: true,
+    user: getUser,
+  });
+});
+
 // ENDPOINT actualizar perfil de la usuaria
+
 server.put('/user/profile', (req, resp) => {
   // recibimos los datos que la usuaria quiere modificar
   const data = req.body;
@@ -176,18 +191,6 @@ server.put('/user/profile', (req, resp) => {
       msj: 'Ha habido algún error.',
     });
   }
-});
-
-//endpoint to return user profile
-server.get('/user/profile', (req, res) => {
-  // rebicimos el id por header params
-  const userProfile = req.headers.userid;
-  const query = db.prepare('SELECT * FROM users WHERE id = ?');
-  const getUser = query.get(userProfile);
-  res.json({
-    success: true,
-    user: getUser,
-  });
 });
 
 //endpoint
